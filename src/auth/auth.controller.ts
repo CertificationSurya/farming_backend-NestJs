@@ -1,34 +1,56 @@
-import { Controller, Get, Post } from "@nestjs/common";
+import {
+  UseGuards,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
+import { Request } from 'express';
+
+import { AuthService } from './auth.service';
+import { FetchUser } from 'src/guards/AuthGuard';
+import { User } from './dto/create-user.dto';
+import { CookieInterceptor } from './cookie.interceptor';
+import { SuccessResponse } from 'src/common/filters/Response.dto';
 
 @Controller('/auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
+  @Get()
+  @UseGuards(FetchUser)
+  getUser(@Req() req: Request) {
+    return this.authService.getUser(req);
+  }
 
-    @Get()
-    getUser() {
-        return {}
-    }
+  @Post('/signup')
+  @UseInterceptors(CookieInterceptor)
+  async signUp(@Body() form: User) {
+    const dbUser = await this.authService.signUp(form);
+    // the return won't send the response because there's a CookieInterceptor that will take these return value and then perform some action and then only return response accordingly. In our case {message: data.message}
+    return new SuccessResponse({
+      data: dbUser,
+      message: `successfully created a user named ${form.username}`,
+    });
+  }
 
-    @Post()
-    sendOTP() {
-        return {}
-    }
-    @Post()
-    verifyOTP() {
-        return {}
-    }
-    @Post()
-    signUp() {
-        return {}
-    }
+  @Post('/login')
+  @UseInterceptors(CookieInterceptor)
+  async login(@Body() { email, password }: { email: string; password: string }) {
 
-    @Post()
-    login() {
-        return {}
-    }
+    const dbUser = await this.authService.login(email, password);
 
-    @Get()
-    logout() {
-        return {}
-    }
+    return new SuccessResponse({
+      data: dbUser,
+      message: `Successfully logged In!`,
+    });
+  }
+
+  @Get('/logout')
+  @UseGuards(FetchUser)
+  logout() {
+    return this.authService.logout();
+  }
 }

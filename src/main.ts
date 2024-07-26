@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 
 import * as cookieParser from 'cookie-parser'
 import * as session from 'express-session';
+import { ResponseInterceptor } from './common/Interceptors/resStringify.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,6 +14,8 @@ async function bootstrap() {
       credentials: true
     },
   });
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   app.use(cookieParser());
   app.use(

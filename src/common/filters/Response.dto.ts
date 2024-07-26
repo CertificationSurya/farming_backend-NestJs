@@ -1,13 +1,13 @@
-import { User } from "src/auth/dto/create-user.dto";
+import { InternalServerErrorException } from "@nestjs/common";
 
 type ResponseSuccessConstructorType = {
-    data?: object,
+    data?: any,
     message?: string,
     statusCode?: number
 }
 
-export class SuccessResponse {
-  data: User | object;
+export class SuccessResponse<T> {
+  data: T;
   message: string | null;
   status: number;
 
@@ -16,5 +16,20 @@ export class SuccessResponse {
     this.message = responseObj.message;
     this.status = responseObj.statusCode || 200;
   }
+
+  toJSON() {
+    return {
+      status: this.status,
+      message: this.message,
+      data: this.data
+    };
+  }
 }
 
+export class ServerErrorResponse extends InternalServerErrorException {
+  constructor(){
+    super({
+      message: "Internal Server Error Occured !",
+    })
+  }
+}

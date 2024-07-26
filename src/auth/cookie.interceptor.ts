@@ -12,7 +12,7 @@ export class CookieInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    return next.handle().pipe( map((data: SuccessResponse) => {
+    return next.handle().pipe( map((data: SuccessResponse<User>) => {
         if (data && data.data) {
           // console.log(data.data)
 

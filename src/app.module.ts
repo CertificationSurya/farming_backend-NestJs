@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+
+import { AuthModule } from './auth/auth.module';
 import { CookieInterceptor } from './auth/cookie.interceptor';
+import { BlogModule } from './blog/blog.module';
 
 // Interceptor is a concept in NestJs that is use to modify the response object
 @Module({
@@ -12,6 +14,7 @@ import { CookieInterceptor } from './auth/cookie.interceptor';
     }),
 
     AuthModule,
+    BlogModule
   ],
 
   providers: [

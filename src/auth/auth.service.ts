@@ -65,13 +65,13 @@ export class AuthService {
 		try {
 			const dbUser = await this.userModel.findOne({email: userEmail});
 			if (!dbUser) {
-        throw new BadRequestException("Invalid credentials provided")
+        return new BadRequestException("Invalid credentials provided")
 			}
 
 			// Check password
 			const isValidPassword = await bcrypt.compare(userPassword, dbUser.password);
 			if (!isValidPassword) {
-				throw new BadRequestException("Invalid credentials provided");
+				return new BadRequestException("Invalid credentials provided");
 			}
 
       const {_id: userId, username, profilePicId, email, phoneNumber, type, location, description, gender} = dbUser;

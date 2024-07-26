@@ -1,6 +1,7 @@
 const dbModels = {
     User: "USER_MODEL",
-    Blog: "BLOG_MODEL"
+    Blog: "BLOG_MODEL",
+    Marketplace: "MARKETPLACE_MODEL"
 }
 
 const dbProvider = {

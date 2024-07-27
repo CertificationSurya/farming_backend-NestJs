@@ -7,6 +7,7 @@ import { CookieInterceptor } from './auth/cookie.interceptor';
 import { BlogModule } from './blog/blog.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
 import { UserModule } from './user/user.module';
+import { ChatModule } from './socket/chat.module';
 
 // Interceptor is a concept in NestJs that is use to modify the response object
 @Module({
@@ -15,6 +16,7 @@ import { UserModule } from './user/user.module';
       envFilePath: '.env.local',
     }),
 
+    ChatModule, // for socket 
     AuthModule,
     BlogModule,
     MarketplaceModule,

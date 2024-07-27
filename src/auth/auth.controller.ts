@@ -6,6 +6,7 @@ import {
   Body,
   Req,
   UseInterceptors,
+  Res,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import { User } from './dto/create-user.dto';
 import { CookieInterceptor } from './cookie.interceptor';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
 import { ReqWithCookieData } from 'src/common/definations';
+import { Response } from 'express';
 
 @Controller('/auth')
 export class AuthController {
@@ -51,7 +53,13 @@ export class AuthController {
 
   @Get('/logout')
   @UseGuards(FetchUser)
-  logout() {
-    return this.authService.logout();
+  logout(@Res() res: Response) {
+    
+    try {
+			res.clearCookie("farmer_token");
+			return res.status(200).json({message: "success"});
+		} catch (error) {
+			return res.status(400).json({message: "Error! Couldn't Logout"});
+		}
   }
 }

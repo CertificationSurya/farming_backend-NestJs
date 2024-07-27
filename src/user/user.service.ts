@@ -19,10 +19,10 @@ export class UserService {
 
   async getConversation(userId: string) {
     try {
-      const users = await this.userModel.find(
-        { _id: { $ne: userId } }, // no currentUser
-        { password: 0 }, // noPassword field
-      );
+      // const users = await this.userModel.find(
+      //   { _id: { $ne: userId } }, // no currentUser
+      //   { password: 0 }, // noPassword field
+      // );
 
       const conversationUserIsIn = await this.conversationModel.find({
         $or: [{ senderId: userId }, { receiverId: userId }],
@@ -42,7 +42,7 @@ export class UserService {
 
         chattedUserInfo = await this.userModel.find(
           { _id: { $in: chattedUserId } },
-          'username email phoneNumber type',
+          'username email phoneNumber type profilePicId gender',
         );
       }
 

@@ -5,7 +5,7 @@ import { MessageSchema } from 'src/schemas/chat.schema';
 
 export const messageProvider = [
   {
-    provide: dbModels.Chat,
+    provide: dbModels.Message,
 
     useFactory: (connection: Connection): Model<IMessage> => connection.model<IMessage>("Message", MessageSchema),
 

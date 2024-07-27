@@ -81,7 +81,4 @@ export class AuthService {
 
   }
 
-  logout() {
-    return true;
-  }
 }

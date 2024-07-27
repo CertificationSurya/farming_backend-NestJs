@@ -12,12 +12,10 @@ import {
 
 import { BlogService } from './blog.service';
 
-import type { AllKeySameType } from '../common/definations';
-import { Request } from 'express';
+import type { AllKeySameType, ReqWithCookieData } from '../common/definations';
 import { FetchUser } from 'src/guards/AuthGuard';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
 import { Blog } from './dto/create-blog.dto';
-
 
 @Controller('/blog')
 export class BlogController {
@@ -32,12 +30,34 @@ export class BlogController {
   @UseGuards(FetchUser)
   async createPost(
     @Body() { title, body }: AllKeySameType<string>,
-    @Req() req: Request,
-  ): Promise<SuccessResponse<Blog>>{
-    // @ts-ignore
-    const {userId, username}: AllKeySameType<string> = req.userData;
-    const res = await this.blogService.createPost({ title, body }, { userId, username });
-    return res
+    @Req() req: ReqWithCookieData,
+  ): Promise<SuccessResponse<Blog>> {
+    const { userId, username } = req.userData;
+    const res = await this.blogService.createPost(
+      { title, body },
+      { userId, username },
+    );
+    return res;
+  }
+
+  @Get('/user')
+  @UseGuards(FetchUser)
+  async getUserPosts(@Req() req: ReqWithCookieData) {
+    const { userId } = req.userData;
+    return this.blogService.getUserPosts(userId);
+  }
+  
+  @Get('/user/:id')
+  @UseGuards(FetchUser)
+  getUserPost(@Param('id') id: string, @Req() req: ReqWithCookieData) {
+    const {userId} = req.userData;
+
+    return this.blogService.getSingleUser({id, userId});
+  }
+
+  @Get('/user-related/:userId')
+  getUserRelatedPosts(@Param('userId') userId: string) {
+    return this.blogService.getUserRelatedPosts(userId);
   }
 
   @Get('/:id')
@@ -50,29 +70,16 @@ export class BlogController {
   updatePost(
     @Param('id') id: string,
     @Body() { title, body }: AllKeySameType<string>,
+    @Req() req: ReqWithCookieData,
   ) {
-    //@ts-ignore
     const { userId } = req.userData;
     return this.blogService.updatePost({ title, body }, { id, userId });
   }
 
   @Delete('/:id')
   @UseGuards(FetchUser)
-  deletePost(@Param('id') id: string) {
-    //@ts-ignore
+  deletePost(@Param('id') id: string, @Req() req: ReqWithCookieData) {
     const { userId } = req.userData;
     return this.blogService.deletePost({ id, userId });
-  }
-
-  @Get('/user')
-  getUserPosts() {
-    //@ts-ignore
-    const { userId }: { userId: string } = req.userData;
-    return this.blogService.getUserPosts(userId);
-  }
-
-  @Get('/user-related/:userId')
-  getUserRelatedPosts(@Param('userId') userId: string) {
-    this.blogService.getUserRelatedPosts(userId);
   }
 }

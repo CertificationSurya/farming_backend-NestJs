@@ -1,7 +1,6 @@
 import { Document, Types } from 'mongoose';
 
-// This interface extends Document to include MongoDB-specific properties like _id
-export interface User extends Document {
+export interface IUser {
   username: string;
   password: string;
   email: string;
@@ -12,3 +11,5 @@ export interface User extends Document {
   profilePicId?: Types.ObjectId | null;
   type: 'Farmer' | 'Expert'; 
 }
+
+export interface User extends IUser, Document {}

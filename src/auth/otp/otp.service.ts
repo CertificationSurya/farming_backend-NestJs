@@ -1,6 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Request } from 'express';
 
 import SendMailOtp from 'src/common/utils/sendOTP.util';
 import { dbModels } from 'src/constants';
@@ -8,11 +7,13 @@ import { dbModels } from 'src/constants';
 import { User } from '../dto/create-user.dto';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
 
+import { ReqWithSessionOTP } from 'src/common/definations';
+
 Injectable();
 export class OTPService {
   constructor(@Inject(dbModels.User) private userModel: Model<User>) {}
 
-  async sendOTP(email: string, req: Request) {
+  async sendOTP(email: string, req: ReqWithSessionOTP) {
     const dbUser = await this.userModel.findOne({ email });
     if (dbUser) {
       throw new BadRequestException(`User with ${dbUser.email} already exists`);
@@ -20,7 +21,6 @@ export class OTPService {
 
     try {
       const SixDigitcode = await SendMailOtp(email);
-      // @ts-ignore
       req.session.otp = SixDigitcode;
 
       if (SixDigitcode)
@@ -31,8 +31,7 @@ export class OTPService {
     }
   }
 
-  verifyOTP(OTP: number, req: Request) {
-    // @ts-ignore
+  verifyOTP(OTP: number, req: ReqWithSessionOTP) {
     if (req.session.otp == OTP) {
       return new SuccessResponse({
         message: "User authenticated successfully"

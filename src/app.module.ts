@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { CookieInterceptor } from './auth/cookie.interceptor';
 import { BlogModule } from './blog/blog.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
+import { UserModule } from './user/user.module';
 
 // Interceptor is a concept in NestJs that is use to modify the response object
 @Module({
@@ -16,7 +17,8 @@ import { MarketplaceModule } from './marketplace/marketplace.module';
 
     AuthModule,
     BlogModule,
-    MarketplaceModule
+    MarketplaceModule,
+    UserModule
   ],
 
   providers: [

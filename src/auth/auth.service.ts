@@ -4,16 +4,14 @@ import { Model } from 'mongoose';
 import { dbModels } from 'src/constants';
 
 import * as bcrypt from 'bcryptjs';
-import { Request } from 'express';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
+import { UserDataType } from 'src/common/definations';
 
 Injectable();
 export class AuthService {
   constructor(@Inject(dbModels.User) private userModel: Model<User>) {}
 
-  getUser(req: Request) {
-    // @ts-ignore
-    const {userData} = req
+  getUser(userData: UserDataType) {
 
     return new SuccessResponse({
       data: userData,

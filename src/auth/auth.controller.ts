@@ -7,13 +7,13 @@ import {
   Req,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
 
 import { AuthService } from './auth.service';
 import { FetchUser } from 'src/guards/AuthGuard';
 import { User } from './dto/create-user.dto';
 import { CookieInterceptor } from './cookie.interceptor';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
+import { ReqWithCookieData } from 'src/common/definations';
 
 @Controller('/auth')
 export class AuthController {
@@ -21,8 +21,9 @@ export class AuthController {
 
   @Get()
   @UseGuards(FetchUser)
-  getUser(@Req() req: Request) {
-    return this.authService.getUser(req);
+  getUser(@Req() req: ReqWithCookieData) {
+    const {userData} = req;
+    return this.authService.getUser(userData);
   }
 
   @Post('/signup')

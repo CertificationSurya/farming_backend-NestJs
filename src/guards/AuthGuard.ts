@@ -5,16 +5,16 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { Observable } from 'rxjs';
-
 import * as jwt from 'jsonwebtoken';
+
+import { ReqWithCookieData, UserDataType } from 'src/common/definations';
 
 Injectable();
 export class FetchUser implements CanActivate {
   canActivate( context: ExecutionContext ): boolean | Promise<boolean> | Observable<boolean> {
 
-    const req: Request = context.switchToHttp().getRequest();
+    const req: ReqWithCookieData = context.switchToHttp().getRequest();
     const farmer_token = req.cookies.farmer_token;
 
     if (!farmer_token) {
@@ -28,8 +28,7 @@ export class FetchUser implements CanActivate {
       ) as jwt.JwtPayload;
       const { iat, exp, ...data } = JWT_DATA;
       
-      //@ts-ignore
-      req.userData = data;
+      req.userData = data as UserDataType;
     } catch (error) {
       throw new InternalServerErrorException('Internal Server Error Occured');
     }

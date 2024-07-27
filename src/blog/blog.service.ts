@@ -72,7 +72,6 @@ export class BlogService {
 
       await newPost.save();
 
-      console.log(newPost);
       return new SuccessResponse<null>({
         message: 'Your post has been created',
       });
@@ -81,6 +80,21 @@ export class BlogService {
     }
   }
 
+  async getSingleUser({id, userId}: AllKeySameType<string>) {
+    try {
+      const post = await this.blogModel.findOne({_id: id, userId});
+      if (!post) throw new NotFoundException('Blog Not Found!');
+
+      return new SuccessResponse<Blog>({
+        data: post,
+        message: 'Blog found successfully!',
+      });
+    } catch (err) {
+      console.log(err);
+      throw new ServerErrorResponse();
+    }
+  }
+  
   async getSinglePost(id: string) {
     try {
       const post = await this.blogModel.findById(id);
@@ -126,6 +140,7 @@ export class BlogService {
         message: 'Blog Deleted Successfully!',
       });
     } catch (err) {
+      console.log(err)
       throw new ServerErrorResponse();
     }
   }

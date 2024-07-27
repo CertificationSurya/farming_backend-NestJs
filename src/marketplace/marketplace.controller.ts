@@ -15,8 +15,8 @@ import {
 
 import { MarketplaceService } from './marketplace.service';
 
-import type { AllKeySameType } from '../common/definations';
-import { Request, Response } from 'express';
+import type { AllKeySameType, ReqWithCookieData } from '../common/definations';
+import { Response } from 'express';
 import { FetchUser } from 'src/guards/AuthGuard';
 import { SuccessResponse } from 'src/common/filters/Response.dto';
 import { CreateMarketplaceDto } from './dto/create-marketplace.dto';
@@ -38,8 +38,7 @@ export class MarketplaceController {
 
   @Get('/posts')
   @UseGuards(FetchUser)
-  getUserPosts(@Req() req: Request) {
-    //@ts-ignore
+  getUserPosts(@Req() req: ReqWithCookieData) {
     const { userId }: { userId: string } = req.userData;
 
     return this.marketplaceService.getUserPosts(userId);
@@ -59,10 +58,9 @@ export class MarketplaceController {
   @UseGuards(FetchUser)
   async createPost(
     @Body() { itemName, price, details, type, itemType }: CreateMarketplaceDto,
-    @Req() req: Request,
+    @Req() req: ReqWithCookieData,
   ) {
-    // @ts-ignore
-    const { userId, username: postedBy, location }: AllKeySameType<string> = req.userData;
+    const { userId, username: postedBy, location } = req.userData;
 
     const res = await this.marketplaceService.createPost(
       { itemName, price, details, type, itemType },
@@ -110,9 +108,8 @@ export class MarketplaceController {
   }
 
   @Delete('/:itemId')
-  // @UseGuards(FetchUser)
-  deletePost(@Param('itemId') itemId: string, @Req() req:Request) {
-    //@ts-ignore
+  @UseGuards(FetchUser)
+  deletePost(@Param('itemId') itemId: string, @Req() req:ReqWithCookieData) {
     const { userId } = req.userData;
 
     return this.marketplaceService.deletePost({ itemId, userId });
